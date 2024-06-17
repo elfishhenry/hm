@@ -1,4 +1,3 @@
-# slash_commands.py
 import os
 import logging
 import discord
@@ -7,7 +6,9 @@ from dotenv import load_dotenv
 from discord import Intents
 
 # Configure logging
-logging.basicConfig(filename='bot.log', level=logging.INFO, format='%(asctime)s:%(levelname)s:%(message)s')
+script_dir = r"C:\Users\User\Documents\lets try making a bot again\hm"
+log_file = os.path.join(script_dir, 'bot.log')
+logging.basicConfig(filename=log_file, level=logging.INFO, format='%(asctime)s:%(levelname)s:%(message)s')
 
 # Load the environment variables from the .env file
 load_dotenv()
