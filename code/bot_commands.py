@@ -196,7 +196,9 @@ async def softban(interaction: discord.Interaction, member: discord.Member, reas
 @app_commands.checks.has_permissions(manage_messages=True)
 async def purge(interaction: discord.Interaction, number: int):
     await interaction.channel.purge(limit=number)
-    await interaction.response.send_message(f"Deleted {number} messages.", ephemeral=True)
+    log_channel = discord.utils.get(interaction.guild.text_channels, name="log-channel")
+    if log_channel:
+        await log_channel.send(f"Deleted {number} messages.")
 
 @bot.tree.command(name="lockdown", description="Locks a channel for a specified duration or until manually unlocked, with an optional reason.")
 @app_commands.checks.has_permissions(manage_channels=True)
