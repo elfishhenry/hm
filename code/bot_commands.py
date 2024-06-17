@@ -1,13 +1,31 @@
 import os
 import discord
 import logging
-import pycord
 from discord.ext import commands
 from dotenv import load_dotenv
 from discord import Intents, Interaction
 from discord import app_commands
 import pycord
 import asyncio
+import pymongo
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
+
+load_dotenv()
+uri = os.getenv('DBURI')
+
+# Create a new client and connect to the server
+dbclient = MongoClient(uri, server_api=ServerApi('1'))
+
+client_db = MongoClient(uri)
+db = client_db["NEWDCBOTATTEMPT"]
+
+# Send a ping to confirm a successful connection
+try:
+    dbclient.admin.command('ping')
+    print("Pinged your deployment. You successfully connected to MongoDB!")
+except Exception as e:
+    print(e)
 
 
 # Configure logging
@@ -31,7 +49,7 @@ client = commands.Bot(command_prefix='.', intents=intents)
 bot = client
 
 @client.event
-async def on_ready():
+async def on_ready(message):
     logging.info(f'{client.user} has connected to Discord!')
     print(f'{client.user} has connected to Discord!')
     try:
@@ -41,6 +59,8 @@ async def on_ready():
     except Exception as e:
         logging.error(e)
         print(e)
+        
+
 
 @client.tree.command(name="testingaaaaaaaaaa", description="testingaaaaaaaaaa")
 async def how_are_you(interaction: discord.Interaction):
@@ -244,9 +264,15 @@ async def removerole(interaction: discord.Interaction, member: discord.Member, r
 
 @bot.tree.command(name="createrole", description="Creates a new role with specified properties.")
 @app_commands.checks.has_permissions(manage_roles=True)
-async def createrole(interaction: discord.Interaction, name: str, color: discord.Color, permissions: discord.Permissions):
-    role = await interaction.guild.create_role(name=name, color=color, permissions=permissions)
+async def createrole(interaction: discord.Interaction, name: str, color: int, permissions: int):
+    if color < 0 or color > 16777215:
+        await interaction.response.send_message("Invalid color value. Please provide a valid integer color value between 0 and 16777215.", ephemeral=True)
+        return
+    
+    role_permissions = discord.Permissions(permissions)
+    role = await interaction.guild.create_role(name=name, color=discord.Color(color), permissions=role_permissions)
     await interaction.response.send_message(f"Created role {role.name}.")
+
 
 
 @bot.tree.command(name="deleterole", description="Deletes a specified role from the server.")
@@ -332,6 +358,10 @@ async def on_ready():
         logging.error(e)
         print(e)
 
+@client.event
+async def on_disconnect():
+    await client_db.close()
 
-# Run the client with the specified token
+
+#  Run the client with the specified token
 client.run(TOKEN)
