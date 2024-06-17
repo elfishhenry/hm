@@ -5,11 +5,12 @@ import discord
 from dotenv import load_dotenv
 from discord import Intents
 
-
 # Enable all standard intents and message content
 # (prefix commands generally require message content)
 intents = Intents.default()
 intents.message_content = True
+intents.typing = False
+intents.presences = False
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 
