@@ -1,31 +1,14 @@
 import os
 import discord
 import logging
+import pycord
 from discord.ext import commands
 from dotenv import load_dotenv
 from discord import Intents, Interaction
 from discord import app_commands
-import pycord
 import asyncio
-import pymongo
-from pymongo.mongo_client import MongoClient
-from pymongo.server_api import ServerApi
+import random
 
-load_dotenv()
-uri = os.getenv('DBURI')
-
-# Create a new client and connect to the server
-dbclient = MongoClient(uri, server_api=ServerApi('1'))
-
-client_db = MongoClient(uri)
-db = client_db["NEWDCBOTATTEMPT"]
-
-# Send a ping to confirm a successful connection
-try:
-    dbclient.admin.command('ping')
-    print("Pinged your deployment. You successfully connected to MongoDB!")
-except Exception as e:
-    print(e)
 
 
 # Configure logging
@@ -48,10 +31,17 @@ client = commands.Bot(command_prefix='.', intents=intents)
 
 bot = client
 
+
+warnings = {}
+
+
 @client.event
 async def on_ready(message):
     logging.info(f'{client.user} has connected to Discord!')
     print(f'{client.user} has connected to Discord!')
+    bot.change_presence(status=discord.Status.online, activity=discord.Streaming("imlazyanddontwanttocodethisfuckingthinganymorebutialsohavesomeweirdaddictionwhereicantfuckingstop"))
+    print("We have logged in as {0.user}".format(bot))
+
     try:
         synced = await client.tree.sync()
         logging.info(f"Synced {len(synced)} commands")
@@ -60,6 +50,7 @@ async def on_ready(message):
         logging.error(e)
         print(e)
         
+
 
 
 @client.tree.command(name="testingaaaaaaaaaa", description="testingaaaaaaaaaa")
@@ -158,14 +149,19 @@ async def unmute(interaction: discord.Interaction, member: discord.Member):
         await interaction.response.send_message(f"User {member} is not muted.", ephemeral=True)
 
 
+
+
+
 @bot.tree.command(name="warn", description="Issues a warning to a user, with the reason logged.")
-@app_commands.checks.has_permissions(manage_messages=True)
+@commands.has_permissions(manage_messages=True)
 async def warn(interaction: discord.Interaction, member: discord.Member, reason: str = "No reason provided"):
     await interaction.response.send_message(f"User {member} has been warned for: {reason}")
     # Log the warning
     log_channel = discord.utils.get(interaction.guild.text_channels, name="log-channel")
     if log_channel:
         await log_channel.send(f"User {member} has been warned by {interaction.user} for: {reason}")
+
+
 
 @bot.tree.command(name="timeout", description="Temporarily restricts a user from sending messages or participating in voice channels.")
 @app_commands.checks.has_permissions(manage_roles=True)
@@ -178,6 +174,9 @@ async def timeout(interaction: discord.Interaction, member: discord.Member, dura
     await interaction.response.send_message(f"User {member} has been put in timeout for {duration} seconds for: {reason}")
     await asyncio.sleep(duration)
     await member.remove_roles(role, reason="Timeout duration expired.")
+
+
+
 
 
 @bot.tree.command(name="softban", description="Bans and immediately unbans a user, effectively kicking them and deleting their recent messages.")
@@ -311,11 +310,10 @@ async def on_message(message):
 
 
 
-# Moderation commands (assuming you have a separate cog for them)
-# ... (your moderation cog code here) ...
 
 
-@client.event  # Use the traditional event listener for older versions
+
+@client.event  
 async def on_tree_command_error(interaction: Interaction, error: discord.app_commands.AppCommandError):
     if isinstance(error, commands.MissingPermissions):
         await interaction.response.send_message("You don't have the necessary permissions to use this command.")
@@ -344,7 +342,32 @@ async def how_are_you(interaction: discord.Interaction):
     await interaction.response.send_message("I'm a bot, I don't have feelings, but thanks for asking!")
     logging.info(f"Slash command 'how_are_you' used by {interaction.user} in {interaction.channel}")
 
+@bot.tree.command(name="joke", description="Sends a random joke.")
+async def joke(interaction: discord.Interaction):
+    jokes = ["Why don't scientists trust atoms? Because they make up everything!", "Why did the chicken join a band? Because it had the drumsticks!"]
+    await interaction.response.send_message(random.choice(jokes))
 
+
+# Command to send an embed
+
+
+
+@bot.tree.command(name="ping", description="Checks the bot's responsiveness.")
+async def ping(interaction: discord.Interaction):
+    await interaction.response.send_message("Pong!")
+
+@bot.tree.command(name="roll", description="Rolls a virtual dice.")
+@app_commands.describe(dice="The type of dice to roll (e.g., d6, d20)")
+async def roll(interaction: discord.Interaction, dice: str):
+    sides = int(dice[1:])
+    result = random.randint(1, sides)
+    await interaction.response.send_message(f'You rolled a {result}')
+
+@bot.tree.command(name="eight_ball", description="Answers a yes/no question.")
+@app_commands.describe(question="The question to ask the magic 8-ball")
+async def eight_ball(interaction: discord.Interaction, question: str):
+    responses = ["Yes", "No", "Maybe", "Ask again later"]
+    await interaction.response.send_message(f'🎱 {random.choice(responses)}')
 
 
 
@@ -359,10 +382,6 @@ async def on_ready():
     except Exception as e:
         logging.error(e)
         print(e)
-
-@client.event
-async def on_disconnect():
-    await client_db.close()
 
 
 #  Run the client with the specified token
