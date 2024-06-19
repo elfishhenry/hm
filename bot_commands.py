@@ -167,6 +167,46 @@ async def copy_roles(interaction: discord.Interaction, source_guild_id: str, tar
 
     await interaction.response.send_message(f"Roles copied from {source_guild.name} to {target_guild.name} successfully.", ephemeral=True)
 
+@bot.command()
+async def copyroles(ctx, source_server_id: str, destination_server_id: str):
+    try:
+        source_server_id = int(source_server_id)
+        destination_server_id = int(destination_server_id)
+
+        source_guild = bot.get_guild(source_server_id)
+        destination_guild = bot.get_guild(destination_server_id)
+
+        if not source_guild:
+            await ctx.send(f"Source server with ID {source_server_id} not found.")
+            return
+        if not destination_guild:
+            await ctx.send(f"Destination server with ID {destination_server_id} not found.")
+            return
+
+        # Fetch roles from the source guild
+        source_roles = source_guild.roles
+
+        # Create roles in the destination guild
+        for role in source_roles:
+            try:
+                await destination_guild.create_role(
+                    name=role.name,
+                    permissions=role.permissions,
+                    colour=role.colour,
+                    hoist=role.hoist,
+                    mentionable=role.mentionable,
+                    reason=f"Copying role from {source_guild.name}"
+                )
+            except discord.Forbidden:
+                await ctx.send(f"Missing permissions to create roles in {destination_guild.name}")
+                return
+
+        await ctx.send(f"Roles copied from {source_guild.name} to {destination_guild.name}")
+
+    except ValueError:
+        await ctx.send("Server IDs must be valid integers.")
+    except Exception as e:
+        await ctx.send(f"An error occurred: {e}")
 
 
 @client.tree.command(name="testingaaaaaaaaaa", description="testingaaaaaaaaaa")
