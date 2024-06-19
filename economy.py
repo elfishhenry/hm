@@ -109,6 +109,8 @@ async def ecolist(ctx):
 """
     await ctx.send(commands_list)
 
+
+
 # Command to earn money
 @bot.command(name='earn')
 async def earn(ctx):

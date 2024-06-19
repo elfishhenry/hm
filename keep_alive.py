@@ -8,7 +8,7 @@ def home():
     return "Hello. I am alive!"
 
 @app.route('/')
-def subtext():
+def p():
     return "HELL"
 
 
