@@ -8,7 +8,7 @@ class fun(commands.Cog): # create a class for our cog that inherits from command
         self.bot = bot
 
     @commands.slash_command(name="avatar", description="Show the avatar of a specified user.")
-    async def avatar(ctx, user: discord.User = None):
+    async def avatar(self, ctx, user: discord.User = None):
         if user is None:
             user = ctx.author
         await ctx.send(user.avatar_url)
@@ -20,14 +20,14 @@ class fun(commands.Cog): # create a class for our cog that inherits from command
         await ctx.send(f"You got: {random.choice(coin)}")
 
     @commands.slash_command(name="quote", description="Quote a specific message in the channel.")
-    async def quote(ctx, message: discord.Message = None):
+    async def quote(self, ctx, message: discord.Message = None):
         if message is None:
             await ctx.send("Please provide a valid message ID or mention a user.")
         else:
             await ctx.send(f"Quoting message: {message.content}")
 
     @commands.slash_command(name="calc", description="Calculate a mathematical expression.")
-    async def calc(ctx, expression: str):
+    async def calc(self, ctx, expression: str):
         try:
             result = eval(expression)
             await ctx.send(f"Result: {result}")
@@ -42,14 +42,14 @@ class fun(commands.Cog): # create a class for our cog that inherits from command
 
     @commands.slash_command(name="roll", description="Rolls a virtual dice.")
     #@app_commands.describe(dice="The type of dice to roll (e.g., d6, d20)")
-    async def roll(interaction: discord.Interaction, dice: str):
+    async def roll(self, interaction: discord.Interaction, dice: str):
         sides = int(dice[1:])
         result = random.randint(1, sides)
         await interaction.response.send_message(f'You rolled a {result}')
 
     @commands.slash_command(name="eight_ball", description="Answers a yes/no question.")
     #@app_commands.describe(question="The question to ask the magic 8-ball")
-    async def eight_ball(interaction: discord.Interaction, question: str):
+    async def eight_ball(self, interaction: discord.Interaction, question: str):
         responses = ["Yes", "No", "Maybe", "Ask again later"]
         await interaction.response.send_message(f'🎱 {random.choice(responses)}')
 
