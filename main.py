@@ -5,7 +5,6 @@ from os.path import isfile, join
 import os
 from dotenv import load_dotenv
 from discord.ext import commands
-
 from keep_alive import keep_alive
 
 # Loads bots token from .env secrets
@@ -19,7 +18,7 @@ intents.guilds = True
 intents.guild_messages = True
 
 
-bot = discord.Bot(command_prefix="!", intents=discord.Intents.all())
+bot = discord.ext.commands.Bot(command_prefix="!", intents=discord.Intents.all())
 
 client = bot
 
@@ -55,6 +54,6 @@ def start_bot(client):
             f"\n###################\nPOSSIBLE FATAL ERROR:\n{e}\nTHIS MEANS THE BOT HAS NOT STARTED CORRECTLY!"
         )
 
-
+ 
 start_bot(client)
 
