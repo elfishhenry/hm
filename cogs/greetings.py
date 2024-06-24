@@ -7,9 +7,6 @@ class Greetings(commands.Cog): # create a class for our cog that inherits from c
     def __init__(self, bot): # this is a special method that is called when the cog is loaded
         self.bot = bot
 
-    @commands.command() # creates a prefixed command
-    async def hello(self, ctx): # all methods now must have both self and ctx parameters
-        await ctx.send('Hello!')
 
     @discord.slash_command() # we can also add application commands
     async def goodbye(self, ctx):
@@ -27,19 +24,19 @@ class Greetings(commands.Cog): # create a class for our cog that inherits from c
 
     # Define a slash command to respond to "hello"
     @commands.slash_command(name="hello", description="Responds with 'hey'")
-    async def hello(interaction: discord.Interaction):
+    async def hello(self, interaction: discord.Interaction):
         await interaction.response.send_message("hey")
        
 
     # Define a slash command to respond to "goodbye"
     @commands.slash_command(name="goodbye", description="Responds with 'goodbye'")
-    async def goodbye(interaction: discord.Interaction):
+    async def goodbye(self, interaction: discord.Interaction):
         await interaction.response.send_message("goodbye")
     
 
     # Define a slash command to respond to "how are you"
     @commands.slash_command(name="how_are_you", description="Responds with a bot's status")
-    async def how_are_you(interaction: discord.Interaction):
+    async def how_are_you(self, interaction: discord.Interaction):
         await interaction.response.send_message("I'm a bot, I don't have feelings, but thanks for asking!")
   
 
