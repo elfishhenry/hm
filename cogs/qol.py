@@ -9,10 +9,11 @@ class qol(commands.Cog): # create a class for our cog that inherits from command
     def __init__(self, bot): # this is a special method that is called when the cog is loaded
         self.bot = bot
 
-    @commands.slash_command(name='copy_channels', description='Copy channels from one server to another')
+    @discord.slash_command(name='copy_channels', description='Copy channels from one server to another')
     @commands.has_permissions(administrator=True)
     #@commands.command.describe( source_guild_id='The ID of the source guild', target_guild_id='The ID of the target guild')
-    async def copy_channels(interaction: discord.Interaction, source_guild_id: str, target_guild_id: str):
+    async def copy_channels(self, ctx, source_guild_id: str, target_guild_id: str):
+        interaction = ctx
         try:
             source_guild_id = int(source_guild_id)
             target_guild_id = int(target_guild_id)
@@ -66,13 +67,14 @@ class qol(commands.Cog): # create a class for our cog that inherits from command
 
 
 
-    @commands.slash_command(name="testingaaaaaaaaaa", description="testingaaaaaaaaaa")
-    async def how_are_you(interaction: discord.Interaction):
+    @discord.slash_command(name="testingaaaaaaaaaa", description="testingaaaaaaaaaa")
+    async def how_are_you(self, ctx):
+        interaction = ctx
         await interaction.response.send_message("testingaaaaaaaaaa")
 
-    @commands.slash_command(name="backuprolescopy")
+    @discord.slash_command(name="backuprolescopy")
     @commands.has_permissions(administrator=True)
-    async def copyroles(ctx, source_server_id: str, destination_server_id: str):
+    async def copyroles(self, ctx, source_server_id: str, destination_server_id: str):
         try:
             source_server_id = int(source_server_id)
             destination_server_id = int(destination_server_id)
@@ -113,10 +115,11 @@ class qol(commands.Cog): # create a class for our cog that inherits from command
             await ctx.send(f"An error occurred: {e}")
 
 
-    @commands.slash_command(name='rolescopy', description='Copy roles from one server to another')
+    @discord.slash_command(name='rolescopy', description='Copy roles from one server to another')
     @commands.has_permissions(administrator=True)
     #@app_commands.describe(source_guild_id='The ID of the source guild', target_guild_id='The ID of the target guild')
-    async def copy_roles(interaction: discord.Interaction, source_guild_id: str, target_guild_id: str):
+    async def copy_roles(self, ctx, source_guild_id: str, target_guild_id: str):
+        interaction = ctx
         try:
             source_guild_id = int(source_guild_id)
             target_guild_id = int(target_guild_id)

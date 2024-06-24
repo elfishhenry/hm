@@ -57,7 +57,7 @@ class economy(commands.Cog):
 
 # Command to check balance
     @commands.command(name='balance')
-    async def balance(ctx):
+    async def balance(self, ctx):
         user_id = str(ctx.author.id)
         balance = get_balance(user_id)
         bank_balance = user_data[user_id].get('bank', 0)
@@ -66,7 +66,7 @@ class economy(commands.Cog):
         await ctx.send(f"{ctx.author.mention}, your balance is ${balance}, you have ${bank_balance} in the bank, you are level {level} with {xp} XP.")
 
     @commands.command(name='ecolist')
-    async def ecolist(ctx):
+    async def ecolist(self, ctx):
         commands_list = """
     **Economy Commands:**
     - `!balance`: Check your balance and bank balance.
@@ -92,7 +92,7 @@ class economy(commands.Cog):
     - **work**: Earns money by working a random job.
     - **deposit**: Deposits specified amount of money into your bank.
     - **withdraw**: Withdraws specified amount of money from your bank.
-    - **gamble**: Gambles a specified amount of money with a 50% chance to win or lose.
+    - **gamble**: Gambles a specified amount of money with a 50 percent chance to win or lose.
     - **inventory**: Shows the items you currently own.
     - **buy**: Buys an item from the shop using your balance.
     - **shop**: Lists all available items in the shop.
@@ -108,7 +108,7 @@ class economy(commands.Cog):
 
     # Command to earn money
     @commands.command(name='earn')
-    async def earn(ctx):
+    async def earn(self, ctx):
         user_id = str(ctx.author.id)
         earnings = random.randint(1, 10)
         update_balance(user_id, earnings)
@@ -118,7 +118,7 @@ class economy(commands.Cog):
 
     # Command for daily rewards
     @commands.command(name='daily')
-    async def daily(ctx):
+    async def daily(self, ctx):
         user_id = str(ctx.author.id)
         if user_id not in user_data:
             user_data[user_id] = {'balance': 0, 'bank': 0, 'inventory': [], 'last_daily': None, 'xp': 0, 'level': 1, 'achievements': []}
@@ -140,7 +140,7 @@ class economy(commands.Cog):
 
     # Command to work and earn money
     @commands.command(name='work')
-    async def work(ctx):
+    async def work(self, ctx):
         user_id = str(ctx.author.id)
         jobs = ["developer", "designer", "manager", "writer", "teacher"]
         job = random.choice(jobs)
@@ -152,7 +152,7 @@ class economy(commands.Cog):
 
     # Command to deposit money into the bank
     @commands.command(name='deposit')
-    async def deposit(ctx, amount: int):
+    async def deposit(self, ctx, amount: int):
         user_id = str(ctx.author.id)
         balance = get_balance(user_id)
         if amount > balance:
@@ -165,7 +165,7 @@ class economy(commands.Cog):
 
     # Command to withdraw money from the bank
     @commands.command(name='withdraw')
-    async def withdraw(ctx, amount: int):
+    async def withdraw(self, ctx, amount: int):
         user_id = str(ctx.author.id)
         bank_balance = user_data[user_id].get('bank', 0)
         if amount > bank_balance:
@@ -178,7 +178,7 @@ class economy(commands.Cog):
 
     # Command to gamble money
     @commands.command(name='gamble')
-    async def gamble(ctx, amount: int):
+    async def gamble(self, ctx, amount: int):
         user_id = str(ctx.author.id)
         balance = get_balance(user_id)
         if amount > balance:
@@ -199,7 +199,7 @@ class economy(commands.Cog):
 
     # Command to check inventory
     @commands.command(name='inventory')
-    async def inventory(ctx):
+    async def inventory(self, ctx):
         user_id = str(ctx.author.id)
         inventory = user_data.get(user_id, {}).get('inventory', [])
         if not inventory:
@@ -209,7 +209,7 @@ class economy(commands.Cog):
 
     # Command to buy items from the shop
     @commands.command(name='buy')
-    async def buy(ctx, item: str):
+    async def buy(self, ctx, item: str):
         user_id = str(ctx.author.id)
         shop_items = {
             "laptop": 1000,
@@ -235,7 +235,7 @@ class economy(commands.Cog):
 
     # Command to display shop items
     @commands.command(name='shop')
-    async def shop(ctx):
+    async def shop(self, ctx):
         shop_items = {
             "laptop": 1000,
             "phone": 500,
@@ -249,7 +249,7 @@ class economy(commands.Cog):
 
     # Command to give money to another user
     @commands.command(name='give')
-    async def give(ctx, member: discord.Member, amount: int):
+    async def give(self, ctx, member: discord.Member, amount: int):
         giver_id = str(ctx.author.id)
         receiver_id = str(member.id)
 
@@ -271,7 +271,7 @@ class economy(commands.Cog):
 
     # Command to display leaderboard
     @commands.command(name='leaderboard')
-    async def leaderboard(ctx):
+    async def leaderboard(self, ctx):
         sorted_users = sorted(user_data.items(), key=lambda x: x[1]['balance'] + x[1].get('bank', 0), reverse=True)
         leaderboard_message = "**Leaderboard:**\n"
         for i, (user_id, data) in enumerate(sorted_users):
@@ -291,7 +291,7 @@ class economy(commands.Cog):
 
     # Command to trade items with another user
     @commands.command(name='trade')
-    async def trade(ctx, member: discord.Member, your_item: str, their_item: str):
+    async def trade(self, ctx, member: discord.Member, your_item: str, their_item: str):
         user_id = str(ctx.author.id)
         receiver_id = str(member.id)
 
@@ -314,7 +314,7 @@ class economy(commands.Cog):
 
     # Command to use an item
     @commands.command(name='use')
-    async def use(ctx, item: str):
+    async def use(self, ctx, item: str):
         user_id = str(ctx.author.id)
         if item not in user_data[user_id]['inventory']:
             await ctx.send(f"{ctx.author.mention}, you don't have {item}.")

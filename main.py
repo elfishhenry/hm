@@ -43,6 +43,7 @@ def start_bot(client):
         for filename in os.listdir('hm/cogs/'):
             if filename.endswith('.py'):
                 client.load_extension(f'cogs.{filename[:-3]}')
+                print(f"{filename}, the cog of the century, has been loaded")
 
         print("\nAll Cogs Loaded\n===============\nLogging into Discord...")
         client.run(

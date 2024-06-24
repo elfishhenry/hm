@@ -7,23 +7,26 @@ class admin(commands.Cog): # create a class for our cog that inherits from comma
     def __init__(self, bot): # this is a special method that is called when the cog is loaded
         self.bot = bot
 
-    @commands.slash_command(name="addrole", description="Adds a specified role to a user.")
+    @discord.slash_command(name="addrole", description="Adds a specified role to a user.")
     @commands.has_permissions(manage_roles=True)
-    async def addrole(interaction: discord.Interaction, member: discord.Member, role: discord.Role):
+    async def addrole(self, ctx, member: discord.Member, role: discord.Role):
+        interaction = ctx
         await member.add_roles(role)
         await interaction.response.send_message(f"Added role {role.name} to {member}.")
 
 
 
-    @commands.slash_command(name="removerole", description="Removes a specified role from a user.")
+    @discord.slash_command(name="removerole", description="Removes a specified role from a user.")
     @commands.has_permissions(manage_roles=True)
-    async def removerole(interaction: discord.Interaction, member: discord.Member, role: discord.Role):
+    async def removerole(self, ctx, member: discord.Member, role: discord.Role):
+        interaction = ctx
         await member.remove_roles(role)
         await interaction.response.send_message(f"Removed role {role.name} from {member}.")
 
-    @commands.slash_command(name="createrole", description="Creates a new role with specified properties.")
+    @discord.slash_command(name="createrole", description="Creates a new role with specified properties.")
     @commands.has_permissions(manage_roles=True)
-    async def createrole(interaction: discord.Interaction, name: str, color: int, permissions: int):
+    async def createrole(self, ctx, name: str, color: int, permissions: int):
+        interaction = ctx
         if color < 0 or color > 16777215:
             await interaction.response.send_message("Invalid color value. Please provide a valid integer color value between 0 and 16777215.", ephemeral=True)
             return
@@ -34,14 +37,16 @@ class admin(commands.Cog): # create a class for our cog that inherits from comma
 
 
 
-    @commands.slash_command(name="deleterole", description="Deletes a specified role from the server.")
+    @discord.slash_command(name="deleterole", description="Deletes a specified role from the server.")
     @commands.has_permissions(manage_roles=True)
-    async def deleterole(interaction: discord.Interaction, role: discord.Role):
+    async def deleterole(self, ctx, role: discord.Role):
+        interaction = ctx
         await role.delete()
         await interaction.response.send_message(f"Deleted role {role.name}.")
 
-    @commands.slash_command(name="report", description="Allows users to report another user for inappropriate behavior, with the reason logged.")
-    async def report(interaction: discord.Interaction, member: discord.Member, reason: str):
+    @discord.slash_command(name="report", description="Allows users to report another user for inappropriate behavior, with the reason logged.")
+    async def report(self, ctx, member: discord.Member, reason: str):
+        interaction = ctx
         # Log the report
         log_channel = discord.utils.get(interaction.guild.text_channels, name="log-channel")
         if log_channel:

@@ -23,31 +23,31 @@ class Greetings(commands.Cog): # create a class for our cog that inherits from c
     )
 
     # Define a slash command to respond to "hello"
-    @commands.slash_command(name="hello", description="Responds with 'hey'")
-    async def hello(self, interaction: discord.Interaction):
-        await interaction.response.send_message("hey")
+    @discord.slash_command(name="helalo", description="Responds with 'hey'")
+    async def hello(self, ctx):
+        await ctx.response.send_message("hey")
        
 
     # Define a slash command to respond to "goodbye"
-    @commands.slash_command(name="goodbye", description="Responds with 'goodbye'")
-    async def goodbye(self, interaction: discord.Interaction):
-        await interaction.response.send_message("goodbye")
+    @discord.slash_command(name="goodabye", description="Responds with 'goodbye'")
+    async def goodbye(self, ctx):
+        await ctx.response.send_message("goodbye")
     
 
     # Define a slash command to respond to "how are you"
-    @commands.slash_command(name="how_are_you", description="Responds with a bot's status")
-    async def how_are_you(self, interaction: discord.Interaction):
-        await interaction.response.send_message("I'm a bot, I don't have feelings, but thanks for asking!")
+    @discord.slash_command(name="how_araaaaaae_you", description="Responds with a bot's status")
+    async def how_are_you(self, ctx):
+        await ctx.response.send_message("I'm a bot, I don't have feelings, but thanks for asking!")
   
 
 
     @math.command()
-    async def add(ctx, self, a: int, b: int):
+    async def add(self, ctx, a: int, b: int):
         c = a + b
         await ctx.respond(f"{a} + {b} is {c}.")
     
     @advanced_math.command()
-    async def midpoint(ctx, self, x1: float, y1: float, x2: float, y2: float):
+    async def midpoint(self, ctx,  x1: float, y1: float, x2: float, y2: float):
         mid_x = (x1 + x2)/2
         mid_y = (y1 + y2)/2
         await ctx.respond(f"The midpoint between those coordinates is ({mid_x}, {mid_y}).")

@@ -7,13 +7,14 @@ class info(commands.Cog): # create a class for our cog that inherits from comman
     def __init__(self, bot): # this is a special method that is called when the cog is loaded
         self.bot = bot
 
-    @commands.slash_command(name="uptime", description="Display how long the bot has been online since its last restart.")
-    async def uptime(ctx):
+    @discord.slash_command(name="uptime", description="Display how long the bot has been online since its last restart.")
+    async def uptime(self, ctx):
         uptime_seconds = int(commands.uptime().total_seconds())
         await ctx.send(f"Uptime: {uptime_seconds} seconds")
     
-    @commands.slash_command(name="serverinfo", description="Provides information about the server, such as member count, region, and creation date.")
-    async def serverinfo(interaction: discord.Interaction):
+    @discord.slash_command(name="serverinfo", description="Provides information about the server, such as member count, region, and creation date.")
+    async def serverinfo(self, ctx):
+        interaction = ctx
         guild = interaction.guild
         embed = discord.Embed(title=f"Server Info - {guild.name}", color=discord.Color.blue())
         embed.add_field(name="Server ID", value=guild.id, inline=True)
@@ -22,8 +23,9 @@ class info(commands.Cog): # create a class for our cog that inherits from comman
         embed.add_field(name="Created", value=guild.created_at.strftime("%Y-%m-%d %H:%M:%S"), inline=True)
         await interaction.response.send_message(embed=embed)
 
-    @commands.slash_command(name="roleinfo", description="Displays information about a specific role.")
-    async def roleinfo(interaction: discord.Interaction, role: discord.Role):
+    @discord.slash_command(name="roleinfo", description="Displays information about a specific role.")
+    async def roleinfo(self, ctx, role: discord.Role):
+        interaction = ctx
         embed = discord.Embed(title=f"Role Info - {role.name}", color=role.color)
         embed.add_field(name="Role ID", value=role.id, inline=True)
         embed.add_field(name="Color", value=str(role.color), inline=True)
@@ -32,15 +34,16 @@ class info(commands.Cog): # create a class for our cog that inherits from comman
         await interaction.response.send_message(embed=embed)   
 
     @commands.slash_command(name="userinfo", description="Displays information about a user, such as join date, roles, and infractions.")
-    async def userinfo(interaction: discord.Interaction, member: discord.Member):
+    async def userinfo(self, ctx, member: discord.Member):
+        interaction = ctx
         embed = discord.Embed(title=f"User Info - {member}", color=discord.Color.blue())
         embed.add_field(name="User ID", value=member.id, inline=True)
         embed.add_field(name="Joined", value=member.joined_at.strftime("%Y-%m-%d %H:%M:%S"), inline=True)
         embed.add_field(name="Roles", value=", ".join([role.name for role in member.roles]), inline=True)
         await interaction.response.send_message(embed=embed)
 
-    @commands.slash_command(name="serverinfooooo", description="Provide information about the current server.")
-    async def serverinfo(ctx):
+    @discord.slash_command(name="serverinfooooo", description="Provide information about the current server.")
+    async def serverinfo(self, ctx):
         guild = ctx.guild
         member_count = guild.member_count
         channel_count = len(guild.channels)

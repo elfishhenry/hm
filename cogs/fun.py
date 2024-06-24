@@ -35,21 +35,24 @@ class fun(commands.Cog): # create a class for our cog that inherits from command
             await ctx.send(f"Error: {e}")
 
     @discord.slash_command(name="joke", description="Sends a random joke.")
-    async def joke(self, interaction: discord.Interaction):
+    async def joke(self, ctx):
+        interaction = ctx
         jokes = ["Why don't scientists trust atoms? Because they make up everything!", "Why did the chicken join a band? Because it had the drumsticks!"]
         await interaction.response.send_message(random.choice(jokes))
 
 
     @discord.slash_command(name="roll", description="Rolls a virtual dice.")
     #@app_commands.describe(dice="The type of dice to roll (e.g., d6, d20)")
-    async def roll(self, interaction: discord.Interaction, dice: str):
+    async def roll(self, ctx, dice: str):
+        interaction = ctx
         sides = int(dice[1:])
         result = random.randint(1, sides)
         await interaction.response.send_message(f'You rolled a {result}')
 
     @discord.slash_command(name="eight_ball", description="Answers a yes/no question.")
     #@app_commands.describe(question="The question to ask the magic 8-ball")
-    async def eight_ball(self, interaction: discord.Interaction, question: str):
+    async def eight_ball(self, ctx, question: str):
+        interaction = ctx
         responses = ["Yes", "No", "Maybe", "Ask again later"]
         await interaction.response.send_message(f'🎱 {random.choice(responses)}')
 

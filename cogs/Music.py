@@ -52,14 +52,14 @@ class Music(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.slash_command(name='join', description='Joins a voice channel')
+    @discord.slash_command(name='join', description='Joins a voice channel')
     async def join(self, ctx):
         if ctx.voice_client:
             await ctx.respond('I joined a vc', ephemeral=True)
         else:
             await ctx.respond("Failed to join for some reason", ephemeral=True)
 
-    @commands.slash_command(name='leave', description='Leaves the voice channel')
+    @discord.slash_command(name='leave', description='Leaves the voice channel')
     async def leave(self, ctx):
         if ctx.voice_client:
             await ctx.voice_client.disconnect()
@@ -67,7 +67,7 @@ class Music(commands.Cog):
         else:
             await ctx.respond('I am not connected to a voice channel.', ephemeral=True)
 
-    @commands.slash_command(name='play', description='Plays a song from a URL')
+    @discord.slash_command(name='play', description='Plays a song from a URL')
     async def play(self, ctx, url: str):
         async with ctx.typing():
             player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=True)
@@ -85,7 +85,7 @@ class Music(commands.Cog):
             print("Failed to respond to interaction, it might have timed out.")
 
 
-    @commands.slash_command(name='pause', description='Pauses the current song')
+    @discord.slash_command(name='pause', description='Pauses the current song')
     async def pause(self, ctx):
         if ctx.voice_client.is_playing():
             ctx.voice_client.pause()
@@ -93,7 +93,7 @@ class Music(commands.Cog):
         else:
             await ctx.respond('No song is currently playing.', ephemeral=True)
 
-    @commands.slash_command(name='resume', description='Resumes the current song')
+    @discord.slash_command(name='resume', description='Resumes the current song')
     async def resume(self, ctx):
         if ctx.voice_client.is_paused():
             ctx.voice_client.resume()
@@ -101,7 +101,7 @@ class Music(commands.Cog):
         else:
             await ctx.respond('The song is not paused.', ephemeral=True)
 
-    @commands.slash_command(name='stop', description='Stops the current song')
+    @discord.slash_command(name='stop', description='Stops the current song')
     async def stop(self, ctx):
         if ctx.voice_client.is_playing():
             ctx.voice_client.stop()

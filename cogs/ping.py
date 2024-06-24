@@ -7,12 +7,14 @@ class ping(commands.Cog): # create a class for our cog that inherits from comman
     def __init__(self, bot): # this is a special method that is called when the cog is loaded
         self.bot = bot
 
-    @commands.slash_command(name="ping", description="Checks the bot's responsiveness.")
-    async def ping(interaction: discord.Interaction):
+    @discord.slash_command(name="ping", description="Checks the bot's responsiveness.")
+    async def ping(self, ctx):
+        interaction = ctx
         await interaction.response.send_message("Pong!")
 
-    @commands.slash_command(name="serverinfo", description="Provides information about the server, such as member count, region, and creation date.")
-    async def serverinfo(interaction: discord.Interaction):
+    @discord.slash_command(name="serverinfo", description="Provides information about the server, such as member count, region, and creation date.")
+    async def serverinfo(self, ctx):
+        interaction = ctx
         guild = interaction.guild
         embed = discord.Embed(title=f"Server Info - {guild.name}", color=discord.Color.blue())
         embed.add_field(name="Server ID", value=guild.id, inline=True)
@@ -21,8 +23,9 @@ class ping(commands.Cog): # create a class for our cog that inherits from comman
         embed.add_field(name="Created", value=guild.created_at.strftime("%Y-%m-%d %H:%M:%S"), inline=True)
         await interaction.response.send_message(embed=embed)
 
-    @commands.slash_command(name="latency", description="Ping the bot")
-    async def ping(interaction: discord.Interaction):
+    @discord.slash_command(name="latency", description="Ping the bot")
+    async def ping(self, ctx):
+        interaction = ctx
         await interaction.response.send_message(f"Ping or Latency is {round(commands.latency * 1000)}ms")
         print('has connected to Discord!')
 
