@@ -37,13 +37,13 @@ TOKEN = os.getenv("DISCORD_TOKEN")
 #credit to this repo"https://github.com/micfun123/Simplex_bot" for the snippit of code below.
 
 def start_bot(client):
-    lst = [f for f in listdir("c:/Users/User/Documents/lets try making a bot again/hm/cogs/") if isfile(join("cogs/", f))]
+    lst = [f for f in listdir("hm/cogs/") if isfile(join("cogs/", f))]
     no_py = [s.replace(".py", "") for s in lst]
     startup_extensions = ["cogs." + no_py for no_py in no_py]
     try:
-        for cogs in startup_extensions:
-            client.load_extension(cogs)  # Startup all cogs
-            print(f"Loaded {cogs}")
+        for filename in os.listdir('hm/cogs/'):
+            if filename.endswith('.py'):
+                client.load_extension(f'cogs.{filename[:-3]}')
 
         print("\nAll Cogs Loaded\n===============\nLogging into Discord...")
         client.run(

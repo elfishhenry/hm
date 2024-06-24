@@ -49,6 +49,7 @@ def add_xp(user_id, amount):
 
 
 class economy(commands.Cog):
+    
     def __init__(self, bot):
         self.bot = bot
 
