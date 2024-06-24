@@ -1,51 +1,70 @@
 import discord
 from discord.ext import commands
-import json
+import sqlite3
 import os
 import random
 from datetime import datetime, timedelta
-import discord
-import json
 
+# File to store user data
+DATA_FILE = 'economy_data.db'
 
+# Connect to the SQLite database (it will be created if it doesn't exist)
+conn = sqlite3.connect(DATA_FILE)
+c = conn.cursor()
 
-            # File to store user data
-DATA_FILE = 'economy_data.json'
-# Load user data from file
-if os.path.exists(DATA_FILE):
-    with open(DATA_FILE, 'r') as f:
-        user_data = json.load(f)
-else:
-    user_data = {}
-    with open(DATA_FILE, 'w') as f:
-        json.dump(user_data, f)
+# Create table for user data if it doesn't exist
+c.execute('''CREATE TABLE IF NOT EXISTS users (
+                user_id TEXT PRIMARY KEY,
+                balance INTEGER DEFAULT 0,
+                bank INTEGER DEFAULT 0,
+                inventory TEXT DEFAULT '[]',
+                last_daily TEXT DEFAULT NULL,
+                xp INTEGER DEFAULT 0,
+                level INTEGER DEFAULT 1,
+                achievements TEXT DEFAULT '[]'
+            )''')
+conn.commit()
 
 def save_data():
-    with open(DATA_FILE, 'w') as f:
-        json.dump(user_data, f)
+    conn.commit()
 
 def get_balance(user_id):
-    return user_data.get(user_id, {}).get('balance', 0)
+    c.execute('SELECT balance FROM users WHERE user_id = ?', (user_id,))
+    result = c.fetchone()
+    if result:
+        return result[0]
+    return 0
 
 def update_balance(user_id, amount):
-    if user_id not in user_data:
-        user_data[user_id] = {'balance': 0, 'bank': 0, 'inventory': [], 'last_daily': None, 'xp': 0, 'level': 1, 'achievements': []}
-    user_data[user_id]['balance'] += amount
+    c.execute('SELECT * FROM users WHERE user_id = ?', (user_id,))
+    result = c.fetchone()
+    if result:
+        new_balance = result[1] + amount
+        c.execute('UPDATE users SET balance = ? WHERE user_id = ?', (new_balance, user_id))
+    else:
+        c.execute('INSERT INTO users (user_id, balance) VALUES (?, ?)', (user_id, amount))
     add_xp(user_id, amount // 10)
     save_data()
 
 def add_xp(user_id, amount):
-    user = user_data.get(user_id, {})
-    user['xp'] = user.get('xp', 0) + amount
-    while user['xp'] >= user['level'] * 100:
-        user['xp'] -= user['level'] * 100
-        user['level'] += 1
-        user['balance'] += 25  # Reward for leveling up
-        user_data[user_id] = user
+    c.execute('SELECT xp, level, balance FROM users WHERE user_id = ?', (user_id,))
+    result = c.fetchone()
+    if result:
+        xp, level, balance = result
+        xp += amount
+        level_up = False
+        while xp >= level * 100:
+            xp -= level * 100
+            level += 1
+            balance += 25  # Reward for leveling up
+            level_up = True
+        c.execute('UPDATE users SET xp = ?, level = ?, balance = ? WHERE user_id = ?', (xp, level, balance, user_id))
         save_data()
-        return True
-    return False
-
+        return level_up
+    else:
+        c.execute('INSERT INTO users (user_id, xp, level, balance) VALUES (?, ?, ?, ?)', (user_id, amount, 1, 0))
+        save_data()
+        return False
 
 
 class economy(commands.Cog):
@@ -329,3 +348,4 @@ class economy(commands.Cog):
 
 def setup(bot):
     bot.add_cog(economy(bot))
+

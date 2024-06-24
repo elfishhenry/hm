@@ -1,14 +1,37 @@
 import discord
 from discord.ext import commands
 import asyncio
+import sqlite3
+from datetime import datetime
 
-class moderation(commands.Cog): # create a class for our cog that inherits from commands.Cog
-    # this class is used to create a cog, which is a module that can be added to the bot
+class Moderation(commands.Cog): # create a class for our cog that inherits from commands.Cog
 
     def __init__(self, bot): # this is a special method that is called when the cog is loaded
         self.bot = bot
+        self.conn = sqlite3.connect('moderation.db')
+        self.create_table()
 
-    
+    def create_table(self):
+        with self.conn:
+            self.conn.execute('''
+                CREATE TABLE IF NOT EXISTS command_logs (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    command_name TEXT,
+                    user_id TEXT,
+                    user_name TEXT,
+                    target_id TEXT,
+                    target_name TEXT,
+                    reason TEXT,
+                    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+                )
+            ''')
+
+    def log_command(self, command_name, user_id, user_name, target_id=None, target_name=None, reason=None):
+        with self.conn:
+            self.conn.execute('''
+                INSERT INTO command_logs (command_name, user_id, user_name, target_id, target_name, reason)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ''', (command_name, user_id, user_name, target_id, target_name, reason))
 
     @discord.slash_command(name="ban", description="Ban a user from the server")
     @commands.has_permissions(ban_members=True)
@@ -30,6 +53,7 @@ class moderation(commands.Cog): # create a class for our cog that inherits from 
             if not dm_sent:
                 response_message += "\nNote: Failed to send a DM to the user."
             await interaction.response.send_message(response_message)
+            self.log_command('ban', ctx.author.id, str(ctx.author), member.id, str(member), reason)
         except discord.Forbidden:
             await interaction.response.send_message("I do not have permission to ban this user.", ephemeral=True)
         except discord.HTTPException:
@@ -57,6 +81,7 @@ class moderation(commands.Cog): # create a class for our cog that inherits from 
                 return
             
             await ctx.response.send_message(f"User {user} has been unbanned for: {reason}. An invite link was sent to their DM.")
+            self.log_command('unban', ctx.author.id, str(ctx.author), user_id, str(user), reason)
         except discord.NotFound:
             await ctx.response.send_message("User not found.", ephemeral=True)
         except discord.Forbidden:
@@ -71,6 +96,7 @@ class moderation(commands.Cog): # create a class for our cog that inherits from 
         try:
             await member.kick(reason=reason)
             await interaction.response.send_message(f"User {member} has been kicked for: {reason}")
+            self.log_command('kick', ctx.author.id, str(ctx.author), member.id, str(member), reason)
         except discord.Forbidden:
             await interaction.response.send_message("I do not have permission to kick this user.", ephemeral=True)
         except discord.HTTPException:
@@ -85,13 +111,14 @@ class moderation(commands.Cog): # create a class for our cog that inherits from 
             await interaction.response.send_message("Muted role not found. Please create a 'Muted' role.", ephemeral=True)
             return
         await member.add_roles(role, reason=reason)
+        self.log_command('mute', ctx.author.id, str(ctx.author), member.id, str(member), reason)
         if duration:
             await interaction.response.send_message(f"User {member} has been muted for {duration} seconds for: {reason}")
             await asyncio.sleep(duration)
             await member.remove_roles(role, reason="Mute duration expired.")
+            self.log_command('unmute (auto)', ctx.author.id, str(ctx.author), member.id, str(member), "Mute duration expired")
         else:
             await interaction.response.send_message(f"User {member} has been muted indefinitely for: {reason}")
-
 
     @discord.slash_command(name="unmute", description="Unmutes a user.")
     @commands.has_permissions(manage_roles=True)
@@ -101,12 +128,9 @@ class moderation(commands.Cog): # create a class for our cog that inherits from 
         if role in member.roles:
             await member.remove_roles(role)
             await interaction.response.send_message(f"User {member} has been unmuted.")
+            self.log_command('unmute', ctx.author.id, str(ctx.author), member.id, str(member))
         else:
             await interaction.response.send_message(f"User {member} is not muted.", ephemeral=True)
-
-
-
-
 
     @discord.slash_command(name="warn", description="Issues a warning to a user, with the reason logged.")
     @commands.has_permissions(manage_messages=True)
@@ -114,11 +138,10 @@ class moderation(commands.Cog): # create a class for our cog that inherits from 
         interaction = ctx
         await interaction.response.send_message(f"User {member} has been warned for: {reason}")
         # Log the warning
+        self.log_command('warn', ctx.author.id, str(ctx.author), member.id, str(member), reason)
         log_channel = discord.utils.get(interaction.guild.text_channels, name="log-channel")
         if log_channel:
             await log_channel.send(f"User {member} has been warned by {interaction.user} for: {reason}")
-
-
 
     @discord.slash_command(name="timeout", description="Temporarily restricts a user from sending messages or participating in voice channels.")
     @commands.has_permissions(manage_roles=True)
@@ -130,12 +153,10 @@ class moderation(commands.Cog): # create a class for our cog that inherits from 
             return
         await member.add_roles(role, reason=reason)
         await interaction.response.send_message(f"User {member} has been put in timeout for {duration} seconds for: {reason}")
+        self.log_command('timeout', ctx.author.id, str(ctx.author), member.id, str(member), reason)
         await asyncio.sleep(duration)
         await member.remove_roles(role, reason="Timeout duration expired.")
-
-
-
-
+        self.log_command('untimeout', ctx.author.id, str(ctx.author), member.id, str(member), "Timeout duration expired")
 
     @discord.slash_command(name="softban", description="Bans and immediately unbans a user, effectively kicking them and deleting their recent messages.")
     @commands.has_permissions(ban_members=True)
@@ -145,6 +166,7 @@ class moderation(commands.Cog): # create a class for our cog that inherits from 
             await interaction.guild.ban(member, reason=reason, delete_message_days=7)
             await interaction.guild.unban(member, reason="Softban complete")
             await interaction.response.send_message(f"User {member} has been softbanned for: {reason}")
+            self.log_command('softban', ctx.author.id, str(ctx.author), member.id, str(member), reason)
         except discord.Forbidden:
             await interaction.response.send_message("I do not have permission to ban/unban this user.", ephemeral=True)
         except discord.HTTPException:
@@ -155,6 +177,8 @@ class moderation(commands.Cog): # create a class for our cog that inherits from 
     async def purge(self, ctx, number: int):
         interaction = ctx
         await interaction.channel.purge(limit=number)
+        await interaction.response.send_message(f"Deleted {number} messages.")
+        self.log_command('purge', ctx.author.id, str(ctx.author), reason=f"Deleted {number} messages")
         log_channel = discord.utils.get(interaction.guild.text_channels, name="log-channel")
         if log_channel:
             await log_channel.send(f"Deleted {number} messages.")
@@ -166,10 +190,12 @@ class moderation(commands.Cog): # create a class for our cog that inherits from 
         overwrite = discord.PermissionOverwrite(send_messages=False)
         await interaction.channel.set_permissions(interaction.guild.default_role, overwrite=overwrite)
         await interaction.response.send_message(f"Channel locked down for {duration} seconds for: {reason}" if duration else f"Channel locked down indefinitely for: {reason}")
+        self.log_command('lockdown', ctx.author.id, str(ctx.author), reason=reason)
         if duration:
             await asyncio.sleep(duration)
             await interaction.channel.set_permissions(interaction.guild.default_role, overwrite=None)
             await interaction.channel.send("Channel lockdown lifted.")
+            self.log_command('unlock (auto)', ctx.author.id, str(ctx.author))
 
     @discord.slash_command(name="unlock", description="Unlocks a previously locked channel.")
     @commands.has_permissions(manage_channels=True)
@@ -177,8 +203,7 @@ class moderation(commands.Cog): # create a class for our cog that inherits from 
         interaction = ctx
         await interaction.channel.set_permissions(interaction.guild.default_role, overwrite=None)
         await interaction.response.send_message("Channel unlocked.")
-
-
+        self.log_command('unlock', ctx.author.id, str(ctx.author))
 
 def setup(bot): # this is called by Pycord to setup the cog
-    bot.add_cog(moderation(bot)) # add the cog to the bot
+    bot.add_cog(Moderation(bot)) # add the cog to the bot

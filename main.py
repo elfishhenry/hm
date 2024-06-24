@@ -11,7 +11,7 @@ import logging
 log_dir = r"C:\Users\User\Documents\lets try making a bot again\hm"
 
 
-logging.basicConfig(level=logging.INFO)
+
 log_file = os.path.join(log_dir, 'bot.log')
 logging.basicConfig(filename=log_file, level=logging.INFO, format='%(asctime)s:%(levelname)s:%(message)s')
 
@@ -40,7 +40,8 @@ async def on_ready():
 keep_alive()
 
 
-TOKEN = os.getenv("DISCORD_TOKEN")
+#TOKEN = os.getenv("DISCORD_TOKEN")
+TOKEN = os.getenv("elft")
 
 #credit to this repo"https://github.com/micfun123/Simplex_bot" for the snippit of code below.
 
