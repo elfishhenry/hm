@@ -15,7 +15,7 @@ class fun(commands.Cog): # create a class for our cog that inherits from command
 
 
     @commands.slash_command(name="flip", description="Flip a coin to get heads or tails.")
-    async def flip(ctx):
+    async def flip(self, ctx):
         coin = ['Heads', 'Tails']
         await ctx.send(f"You got: {random.choice(coin)}")
 
@@ -35,7 +35,7 @@ class fun(commands.Cog): # create a class for our cog that inherits from command
             await ctx.send(f"Error: {e}")
 
     @commands.slash_command(name="joke", description="Sends a random joke.")
-    async def joke(interaction: discord.Interaction):
+    async def joke(self, interaction: discord.Interaction):
         jokes = ["Why don't scientists trust atoms? Because they make up everything!", "Why did the chicken join a band? Because it had the drumsticks!"]
         await interaction.response.send_message(random.choice(jokes))
 
