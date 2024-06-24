@@ -1,15 +1,15 @@
-from flask import Flask
 from threading import Thread
+from flask import Flask, render_template
 
 app = Flask('')
 
-@app.route('/')
-def home():
-    return "Hello. I am alive!"
+
 
 @app.route('/')
-def p():
-    return "HELL"
+def home():
+   return "Hello. I am alive!"
+
+
 
 
 def run():
