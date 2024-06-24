@@ -6,6 +6,14 @@ import os
 from dotenv import load_dotenv
 from discord.ext import commands
 from keep_alive import keep_alive
+import logging
+
+log_dir = r"C:\Users\User\Documents\lets try making a bot again\hm"
+
+
+logging.basicConfig(level=logging.INFO)
+log_file = os.path.join(log_dir, 'bot.log')
+logging.basicConfig(filename=log_file, level=logging.INFO, format='%(asctime)s:%(levelname)s:%(message)s')
 
 # Loads bots token from .env secrets
 load_dotenv() # load all the variables from the env file
@@ -23,8 +31,11 @@ bot = discord.ext.commands.Bot(command_prefix="!", intents=discord.Intents.all()
 
 @bot.event
 async def on_ready():
+    logging.info(f'{bot.user} has connected to Discord!')
+    print(bot._pending_application_commands)
+    print(bot._application_commands)
     print(bot.commands)
-
+    logging.info(f"Ping or Latency is {round(bot.latency * 1000)}ms")
 
 keep_alive()
 
@@ -73,5 +84,11 @@ cogs_list = [
 for cog in cogs_list:
     bot.load_extension(f'cogs.{cog}')
     print(f'loaded the cog of the century: {cog}')
-
+    logging.info(f'the cog of the century {cog} has been loaded')
 bot.run(TOKEN)
+
+   
+        # Delete the log file after the processes are done
+if os.path.exists(log_file):
+    os.remove(log_file)
+print("Log file deleted.")
