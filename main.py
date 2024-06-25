@@ -40,8 +40,8 @@ async def on_ready():
 keep_alive()
 
 
-#TOKEN = os.getenv("DISCORD_TOKEN")
-TOKEN = os.getenv("elft")
+TOKEN = os.getenv("DISCORD_TOKEN")
+#TOKEN = os.getenv("elft")
 
 #credit to this repo"https://github.com/micfun123/Simplex_bot" for the snippit of code below.
 
