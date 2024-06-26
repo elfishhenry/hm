@@ -26,7 +26,7 @@ class ping(commands.Cog): # create a class for our cog that inherits from comman
     @discord.slash_command(name="latency", description="Ping the bot")
     async def ping(self, ctx):
         interaction = ctx
-        await interaction.response.send_message(f"Ping or Latency is {round(commands.latency * 1000)}ms")
+        await interaction.response.send_message(f"Ping or Latency is {round(discord.latency * 1000)}ms")
         print('has connected to Discord!')
 
 def setup(bot): # this is called by Pycord to setup the cog

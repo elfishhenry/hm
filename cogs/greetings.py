@@ -23,21 +23,12 @@ class Greetings(commands.Cog): # create a class for our cog that inherits from c
     )
 
     # Define a slash command to respond to "hello"
-    @discord.slash_command(name="helalo", description="Responds with 'hey'")
+    @discord.slash_command(name="hello", description="Responds with 'hey'")
     async def hello(self, ctx):
         await ctx.response.send_message("hey")
        
 
-    # Define a slash command to respond to "goodbye"
-    @discord.slash_command(name="goodabye", description="Responds with 'goodbye'")
-    async def goodbye(self, ctx):
-        await ctx.response.send_message("goodbye")
     
-
-    # Define a slash command to respond to "how are you"
-    @discord.slash_command(name="how_araaaaaae_you", description="Responds with a bot's status")
-    async def how_are_you(self, ctx):
-        await ctx.response.send_message("I'm a bot, I don't have feelings, but thanks for asking!")
   
 
 

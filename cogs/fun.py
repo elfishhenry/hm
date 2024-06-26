@@ -7,12 +7,6 @@ class fun(commands.Cog): # create a class for our cog that inherits from command
     def __init__(self, bot): # this is a special method that is called when the cog is loaded
         self.bot = bot
 
-    @discord.slash_command(name="avatar", description="Show the avatar of a specified user.")
-    async def avatar(self, ctx, user: discord.User = None):
-        if user is None:
-            user = ctx.author
-        await ctx.send(user.avatar_url)
-
 
     @discord.slash_command(name="flip", description="Flip a coin to get heads or tails.")
     async def flip(self, ctx):
@@ -55,6 +49,8 @@ class fun(commands.Cog): # create a class for our cog that inherits from command
         interaction = ctx
         responses = ["Yes", "No", "Maybe", "Ask again later"]
         await interaction.response.send_message(f'🎱 {random.choice(responses)}')
+
+
 
 def setup(bot): # this is called by Pycord to setup the cog
     bot.add_cog(fun(bot)) # add the cog to the bot
