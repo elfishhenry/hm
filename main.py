@@ -76,7 +76,6 @@ cogs_list = [
     'moderation',
     'economy',
     'info',
-    'Music',
     'ping',
     'qol'
 ]
