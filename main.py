@@ -24,7 +24,8 @@ intents.bans = True
 intents.members = True 
 intents.guilds = True
 intents.guild_messages = True
-
+intents.auto_moderation_configuration = True
+intents.auto_moderation_execution = True
 
 bot = discord.ext.commands.Bot(command_prefix="!")
 
