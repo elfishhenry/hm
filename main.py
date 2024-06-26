@@ -8,7 +8,7 @@ from discord.ext import commands
 from keep_alive import keep_alive
 import logging
 
-log_dir = r"C:\Users\User\Documents\lets try making a bot again\hm"
+log_dir = r"/home/henry/Python-bot/hm"
 
 
 
@@ -40,8 +40,8 @@ async def on_ready():
 keep_alive()
 
 
-TOKEN = os.getenv("DISCORD_TOKEN")
-#TOKEN = os.getenv("elft")
+#TOKEN = os.getenv("DISCORD_TOKEN")
+TOKEN = os.getenv("elft")
 
 #credit to this repo"https://github.com/micfun123/Simplex_bot" for the snippit of code below.
 
