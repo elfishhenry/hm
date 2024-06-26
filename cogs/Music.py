@@ -49,7 +49,7 @@ class Music(commands.Cog):
     @discord.slash_command(name='join', description='Joins a voice channel')
     async def join(self, ctx):
         if ctx.voice_client:
-            await ctx.respond('Already connected to a voice channel.', ephemeral=True)
+            await ctx.respond('Already connected to a voice channel, or I joined the voice channel', ephemeral=True)
         else:
             if ctx.author.voice:
                 await ctx.author.voice.channel.connect()
