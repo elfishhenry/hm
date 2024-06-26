@@ -33,7 +33,14 @@ class Moderation(commands.Cog): # create a class for our cog that inherits from 
                 VALUES (?, ?, ?, ?, ?, ?)
             ''', (command_name, user_id, user_name, target_id, target_name, reason))
 
-    @discord.slash_command(name="ban", description="Ban a user from the server")
+    
+    mod = discord.SlashCommandGroup("mod", "Moderation commands") # create a Slash Command Group called "Mod"
+    removal = mod.create_subgroup(
+        "removal",
+        "commands that remove SOMETHING from the server"
+    )
+    
+    @removal.command(name="ban", description="Ban a user from the server")
     @commands.has_permissions(ban_members=True)
     async def ban(self, ctx, member: discord.Member, reason: str = "No reason provided"):
         interaction = ctx
@@ -61,7 +68,7 @@ class Moderation(commands.Cog): # create a class for our cog that inherits from 
 
 
     # Unban Command
-    @discord.slash_command(name="unban", description="Unban a user from the server")
+    @removal.command(name="unban", description="Unban a user from the server")
     @commands.has_permissions(ban_members=True)
     async def unban(self, ctx, user_id: str, reason: str = "No reason provided"):
         try:
@@ -89,7 +96,7 @@ class Moderation(commands.Cog): # create a class for our cog that inherits from 
         except discord.HTTPException:
             await ctx.response.send_message("An error occurred while trying to unban this user.", ephemeral=True)
 
-    @discord.slash_command(name="kick", description="Kicks a user from the server and optionally logs the reason.")
+    @removal.command(name="kick", description="Kicks a user from the server and optionally logs the reason.")
     @commands.has_permissions(kick_members=True)
     async def kick(self, ctx, member: discord.Member, reason: str = "No reason provided"):
         interaction = ctx
@@ -102,7 +109,7 @@ class Moderation(commands.Cog): # create a class for our cog that inherits from 
         except discord.HTTPException:
             await interaction.response.send_message("An error occurred while trying to kick this user.", ephemeral=True)
 
-    @discord.slash_command(name="mute", description="Mutes a user for a specified duration or indefinitely, with an optional reason.")
+    @mod.command(name="mute", description="Mutes a user for a specified duration or indefinitely, with an optional reason.")
     @commands.has_permissions(manage_roles=True)
     async def mute(self, ctx, member: discord.Member, duration: int = None, reason: str = "No reason provided"):
         interaction = ctx
@@ -120,7 +127,7 @@ class Moderation(commands.Cog): # create a class for our cog that inherits from 
         else:
             await interaction.response.send_message(f"User {member} has been muted indefinitely for: {reason}")
 
-    @discord.slash_command(name="unmute", description="Unmutes a user.")
+    @mod.command(name="unmute", description="Unmutes a user.")
     @commands.has_permissions(manage_roles=True)
     async def unmute(self, ctx, member: discord.Member):
         interaction = ctx
@@ -132,7 +139,7 @@ class Moderation(commands.Cog): # create a class for our cog that inherits from 
         else:
             await interaction.response.send_message(f"User {member} is not muted.", ephemeral=True)
 
-    @discord.slash_command(name="warn", description="Issues a warning to a user, with the reason logged.")
+    @mod.command(name="warn", description="Issues a warning to a user, with the reason logged.")
     @commands.has_permissions(manage_messages=True)
     async def warn(self, ctx, member: discord.Member, reason: str = "No reason provided"):
         interaction = ctx
@@ -143,7 +150,7 @@ class Moderation(commands.Cog): # create a class for our cog that inherits from 
         if log_channel:
             await log_channel.send(f"User {member} has been warned by {interaction.user} for: {reason}")
 
-    @discord.slash_command(name="timeout", description="Temporarily restricts a user from sending messages or participating in voice channels.")
+    @mod.command(name="timeout", description="Temporarily restricts a user from sending messages or participating in voice channels.")
     @commands.has_permissions(manage_roles=True)
     async def timeout(self, ctx, member: discord.Member, duration: int, reason: str = "No reason provided"):
         interaction = ctx
@@ -158,7 +165,7 @@ class Moderation(commands.Cog): # create a class for our cog that inherits from 
         await member.remove_roles(role, reason="Timeout duration expired.")
         self.log_command('untimeout', ctx.author.id, str(ctx.author), member.id, str(member), "Timeout duration expired")
 
-    @discord.slash_command(name="softban", description="Bans and immediately unbans a user, effectively kicking them and deleting their recent messages.")
+    @removal.command(name="softban", description="Bans and immediately unbans a user, effectively kicking them and deleting their recent messages.")
     @commands.has_permissions(ban_members=True)
     async def softban(self, ctx, member: discord.Member, reason: str = "No reason provided"):
         interaction = ctx
@@ -172,7 +179,7 @@ class Moderation(commands.Cog): # create a class for our cog that inherits from 
         except discord.HTTPException:
             await interaction.response.send_message("An error occurred while trying to softban this user.", ephemeral=True)
 
-    @discord.slash_command(name="purge", description="Deletes a specified number of messages from a channel.")
+    @removal.command(name="purge", description="Deletes a specified number of messages from a channel.")
     @commands.has_permissions(manage_messages=True)
     async def purge(self, ctx, number: int):
         interaction = ctx
@@ -183,7 +190,7 @@ class Moderation(commands.Cog): # create a class for our cog that inherits from 
         if log_channel:
             await log_channel.send(f"Deleted {number} messages.")
 
-    @discord.slash_command(name="lockdown", description="Locks a channel for a specified duration or until manually unlocked, with an optional reason.")
+    @mod.command(name="lockdown", description="Locks a channel for a specified duration or until manually unlocked, with an optional reason.")
     @commands.has_permissions(manage_channels=True)
     async def lockdown(self, ctx, duration: int = None, reason: str = "No reason provided"):
         interaction = ctx
@@ -197,7 +204,7 @@ class Moderation(commands.Cog): # create a class for our cog that inherits from 
             await interaction.channel.send("Channel lockdown lifted.")
             self.log_command('unlock (auto)', ctx.author.id, str(ctx.author))
 
-    @discord.slash_command(name="unlock", description="Unlocks a previously locked channel.")
+    @mod.command(name="unlock", description="Unlocks a previously locked channel.")
     @commands.has_permissions(manage_channels=True)
     async def unlock(self, ctx):
         interaction = ctx

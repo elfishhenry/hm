@@ -21,17 +21,7 @@ class Greetings(commands.Cog): # create a class for our cog that inherits from c
         "advanced",
         "super hard math commands!"
     )
-
-    # Define a slash command to respond to "hello"
-    @discord.slash_command(name="hello", description="Responds with 'hey'")
-    async def hello(self, ctx):
-        await ctx.response.send_message("hey")
-       
-
     
-  
-
-
     @math.command()
     async def add(self, ctx, a: int, b: int):
         c = a + b
@@ -42,6 +32,12 @@ class Greetings(commands.Cog): # create a class for our cog that inherits from c
         mid_x = (x1 + x2)/2
         mid_y = (y1 + y2)/2
         await ctx.respond(f"The midpoint between those coordinates is ({mid_x}, {mid_y}).")
+
+
+    # Define a slash command to respond to "hello"
+    @discord.slash_command(name="hello", description="Responds with 'hey'")
+    async def hello(self, ctx):
+        await ctx.response.send_message("hey")
 
     @commands.Cog.listener() # we can add event listeners to our cog
     async def on_member_join(self, member): # this is called when a member joins the server

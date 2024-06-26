@@ -8,19 +8,29 @@ class fun(commands.Cog): # create a class for our cog that inherits from command
         self.bot = bot
 
 
-    @discord.slash_command(name="flip", description="Flip a coin to get heads or tails.")
+    fun = discord.SlashCommandGroup("fun", "fun commands") # create a Slash Command Group called "Fun"
+    randomfun = fun.create_subgroup(
+        "randomfun",
+        "randomfun commands"
+    )
+    mathfun = fun.create_subgroup(
+        "mathfun",
+        "fun math commands"
+    )
+
+    @randomfun.command(description="Flip a coin to get heads or tails.")
     async def flip(self, ctx):
         coin = ['Heads', 'Tails']
         await ctx.send(f"You got: {random.choice(coin)}")
 
-    @discord.slash_command(name="quote", description="Quote a specific message in the channel.")
+    @fun.command(description="Quote a specific message in the channel.")
     async def quote(self, ctx, message: discord.Message = None):
         if message is None:
             await ctx.send("Please provide a valid message ID or mention a user.")
         else:
             await ctx.send(f"Quoting message: {message.content}")
 
-    @discord.slash_command(name="calc", description="Calculate a mathematical expression.")
+    @mathfun.command(description="Calculate a mathematical expression.")
     async def calc(self, ctx, expression: str):
         try:
             result = eval(expression)
@@ -28,14 +38,14 @@ class fun(commands.Cog): # create a class for our cog that inherits from command
         except Exception as e:
             await ctx.send(f"Error: {e}")
 
-    @discord.slash_command(name="joke", description="Sends a random joke.")
+    @randomfun.command(description="Sends a random joke.")
     async def joke(self, ctx):
         interaction = ctx
         jokes = ["Why don't scientists trust atoms? Because they make up everything!", "Why did the chicken join a band? Because it had the drumsticks!"]
         await interaction.response.send_message(random.choice(jokes))
 
 
-    @discord.slash_command(name="roll", description="Rolls a virtual dice.")
+    @randomfun.command(description="Rolls a virtual dice.")
     #@app_commands.describe(dice="The type of dice to roll (e.g., d6, d20)")
     async def roll(self, ctx, dice: str):
         interaction = ctx
@@ -43,7 +53,7 @@ class fun(commands.Cog): # create a class for our cog that inherits from command
         result = random.randint(1, sides)
         await interaction.response.send_message(f'You rolled a {result}')
 
-    @discord.slash_command(name="eight_ball", description="Answers a yes/no question.")
+    @randomfun.command(description="Answers a yes/no question.")
     #@app_commands.describe(question="The question to ask the magic 8-ball")
     async def eight_ball(self, ctx, question: str):
         interaction = ctx

@@ -7,7 +7,13 @@ class admin(commands.Cog): # create a class for our cog that inherits from comma
     def __init__(self, bot): # this is a special method that is called when the cog is loaded
         self.bot = bot
 
-    @discord.slash_command(name="addrole", description="Adds a specified role to a user.")
+    admins = discord.SlashCommandGroup("admin", "Administrative commands") # create a Slash Command Group called "Admin"
+    role = admins.create_subgroup(
+        "role",
+        "Role related admin commands"
+    )
+
+    @role.command(name="addrole", description="Adds a specified role to a user.")
     @commands.has_permissions(manage_roles=True)
     async def addrole(self, ctx, member: discord.Member, role: discord.Role):
         interaction = ctx
@@ -16,14 +22,14 @@ class admin(commands.Cog): # create a class for our cog that inherits from comma
 
 
 
-    @discord.slash_command(name="removerole", description="Removes a specified role from a user.")
+    @role.command(name="removerole", description="Removes a specified role from a user.")
     @commands.has_permissions(manage_roles=True)
     async def removerole(self, ctx, member: discord.Member, role: discord.Role):
         interaction = ctx
         await member.remove_roles(role)
         await interaction.response.send_message(f"Removed role {role.name} from {member}.")
 
-    @discord.slash_command(name="createrole", description="Creates a new role with specified properties.")
+    @role.command(name="createrole", description="Creates a new role with specified properties.")
     @commands.has_permissions(manage_roles=True)
     async def createrole(self, ctx, name: str, color: int, permissions: int):
         interaction = ctx
@@ -37,14 +43,14 @@ class admin(commands.Cog): # create a class for our cog that inherits from comma
 
 
 
-    @discord.slash_command(name="deleterole", description="Deletes a specified role from the server.")
+    @role.command(name="deleterole", description="Deletes a specified role from the server.")
     @commands.has_permissions(manage_roles=True)
     async def deleterole(self, ctx, role: discord.Role):
         interaction = ctx
         await role.delete()
         await interaction.response.send_message(f"Deleted role {role.name}.")
 
-    @discord.slash_command(name="report", description="Allows users to report another user for inappropriate behavior, with the reason logged.")
+    @admins.command(name="report", description="Allows users to report another user for inappropriate behavior, with the reason logged.")
     async def report(self, ctx, member: discord.Member, reason: str):
         interaction = ctx
         # Log the report

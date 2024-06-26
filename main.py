@@ -26,7 +26,7 @@ intents.guilds = True
 intents.guild_messages = True
 
 
-bot = discord.ext.commands.Bot(command_prefix="!", intents=discord.Intents.all())
+bot = discord.ext.commands.Bot(command_prefix="!")
 
 
 @bot.event
@@ -77,7 +77,8 @@ cogs_list = [
     'economy',
     'info',
     'ping',
-    'qol'
+    'qol',
+    'help'
 ]
 
 

@@ -8,8 +8,15 @@ class qol(commands.Cog): # create a class for our cog that inherits from command
 
     def __init__(self, bot): # this is a special method that is called when the cog is loaded
         self.bot = bot
+    
+    copy = discord.SlashCommandGroup("copy", "copying something from discord") # create a Slash Command Group called "copy"
+    oqol = copy.create_subgroup(
+        "noncopyqol",
+        "nodes"
+    )
 
-    @discord.slash_command(name='copy_channels', description='Copy channels from one server to another')
+
+    @copy.command(name='copy_channels', description='Copy channels from one server to another')
     @commands.has_permissions(administrator=True)
     #@commands.command.describe( source_guild_id='The ID of the source guild', target_guild_id='The ID of the target guild')
     async def copy_channels(self, ctx, source_guild_id: str, target_guild_id: str):
@@ -67,12 +74,7 @@ class qol(commands.Cog): # create a class for our cog that inherits from command
 
 
 
-    @discord.slash_command(name="testingaaaaaaaaaa", description="testingaaaaaaaaaa")
-    async def how_are_you(self, ctx):
-        interaction = ctx
-        await interaction.response.send_message("testingaaaaaaaaaa")
-
-    @discord.slash_command(name="backuprolescopy")
+    @copy.command(name="copy_role_positions")
     @commands.has_permissions(administrator=True)
     async def copyroles(self, ctx, source_server_id: str, destination_server_id: str):
         try:
@@ -115,7 +117,7 @@ class qol(commands.Cog): # create a class for our cog that inherits from command
             await ctx.send(f"An error occurred: {e}")
 
 
-    @discord.slash_command(name='rolescopy', description='Copy roles from one server to another')
+    @oqol.command(name='rolescopy', description='Copy roles from one server to another')
     @commands.has_permissions(administrator=True)
     #@app_commands.describe(source_guild_id='The ID of the source guild', target_guild_id='The ID of the target guild')
     async def copy_roles(self, ctx, source_guild_id: str, target_guild_id: str):
