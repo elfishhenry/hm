@@ -13,10 +13,6 @@ class info(commands.Cog): # create a class for our cog that inherits from comman
         "info"
     )
 
-    @info.command(name="uptime", description="Display how long the bot has been online since its last restart.")
-    async def uptime(self, ctx):
-        uptime_seconds = int(commands.uptime().total_seconds())
-        await ctx.send(f"Uptime: {uptime_seconds} seconds")
     
     @subinfo.command(name="serverinfo", description="Provides information about the server, such as member count, region, and creation date.")
     async def serverinfo(self, ctx):

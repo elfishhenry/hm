@@ -5,7 +5,6 @@ from os.path import isfile, join
 import os
 from dotenv import load_dotenv
 from discord.ext import commands
-from keep_alive import keep_alive
 import logging
 
 log_dir = r"/home/henry/Python-bot/hm"
@@ -36,8 +35,7 @@ async def on_ready():
     print(bot._application_commands)
     print(bot.commands)
     logging.info(f"Ping or Latency is {round(bot.latency * 1000)}ms")
-
-keep_alive()
+    
 
 
 #TOKEN = os.getenv("DISCORD_TOKEN")
