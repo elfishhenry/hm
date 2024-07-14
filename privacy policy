@@ -4,3 +4,7 @@ General privacy policy for bots developed by elfishhenry, and associates.
 1: Any of my bots, do not store user data, in an accessible way.
 
 2: This but uses functions that can display message content and usernames, display-names and profile pictures, and I am not responsible if anyone uses this maliciously.
+
+3: These bot(s) may collect user and server names, as a way to display errors, so that I can fix problems. 
+
+4: User id's are also sent via error messages.
